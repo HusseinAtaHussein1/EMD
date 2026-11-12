@@ -1,0 +1,97 @@
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+web_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Browser Driver Layer credentials — must never be committed (see tools/browser_driver/README.md).
+# Real credential files live at projects/{PROJECT}/credentials/credentials.json — this repo-root
+# rule is the primary enforcement, backed by a second, local .gitignore inside each project's own
+# credentials/ folder. Scoped to the literal filename only — does not match
+# projects/{{PROJECT_NAME}}/resources/credentials/ (a directory of *documentation about*
+# credentials, not a secret file itself) or any *.template.json.
+**/credentials.json
+*.creds.json
+.creds.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Claude - local settings/state stay untracked; skills (incl. the architecture-review
+# skill + its shared engine) and this folder's own README are meant to travel with the
+# repo, so they're excepted below.
+.claude/*
+!.claude/skills/
+!.claude/README.md
+
+# Playwright MCP
+.playwright-mcp/
+
+# Playwright Outputs
+playwright-report/
+test-results/
+blob-report/
+
+# Coverage
+coverage/
+.nyc_output
+*.lcov
+
+# Build Outputs
+dist/
+build/
+.next/
+out/
+.nuxt/
+.output/
+.cache/
+.parcel-cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.vscode-test/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+
+# TypeScript
+*.tsbuildinfo
+
+# npm / pnpm / Yarn
+.npm
+.pnpm-store
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Misc
+.eslintcache
+.stylelintcache
+.firebase/
+.serverless/
+.dynamodb/
+.tern-port
+*.tgz
+*.pid
+*.pid.lock
+*.seed
