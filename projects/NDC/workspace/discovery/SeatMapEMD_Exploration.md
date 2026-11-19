@@ -67,3 +67,30 @@ PNR `YHI6NJ` / `NDCEG-BR-F261103CnOuUP` — hold, passenger "QaEmd Tester", expi
 - Expected EMDs (user): outbound meal `1H2MSZ_E5YXMW9LIXB1M1SIXW6YAZ5C1EPG-37`; return meal `1H2MSZ_E5YXMW9LIXB1M1SIXW6YAZ5C1EPG-91`; seats and baggage none.
 - Booking Confirmation **Pass**; PNR Query **Fail** (2 flight legs, no ancillaries/EMD); Itinerary **Pass** (Journey 1 CAI-JED has -37, Journey 2 JED-CAI has -91); Finance Report **Fail** (one row, no EMD). Overall **Fail**.
 - Observed: Booking Confirmation baggage column shows "2 Piece(s)" for outbound vs "1 Piece(s)" for return; PNR Query shows both legs under one ticket.
+
+## 12. Re-run 2026-11-19 (skill ndc-emd-booking-verification) — run inputs and rules
+- Environment `http://192.168.1.80/auth/login`, Admin `e.saady`, Branch NDC1_Hussein (BRN222). Driven via Playwright over CDP against a dedicated Chrome window.
+- User rules for this run: all ancillaries (seat, meal, baggage) carry EMDs; infants have no seat (seat EMD not applicable for an infant); an adult travelling with an infant cannot choose an exit seat; Finance Report checks and TC-SEATEMD-012 are excluded.
+- Planned bookings: B1 OW 1 ADT; B2 OW 1 ADT+1 CHD; B3 RT 1 ADT; B4 RT 2 ADT+1 CHD+1 INF; B5 MC 1 ADT; B6 MC 1 ADT+2 CHD+1 INF; B7 OW hold 1 ADT+1 CHD+1 INF (user pays); B8 OW hold 1 ADT (cancel with approval). Routes: OW CAI-JED 30/11/2026; RT CAI-JED 30/11, JED-CAI 30/11; MC CAI-JED 30/11, JED-CAI 01/12, CAI-DXB 02/12.
+
+## 13. B1 — one-way, 1 ADT (Book) — 2026-11-19
+- First attempt on result #1 (MS665 02:30, EGP 8,881) was interrupted by the user at the Confirm Booking dialog; wallet balance unchanged afterwards (EGP 8,899,557.6), so no booking was created. User asked to use the second result instead.
+- Booking: MS661 (A330) CAI 07:15 - JED 10:25, 30/11/2026, RBD T; Mr QaBone Tester; meal R1?SRV30 Vegetarian Hindu (0 EGP); baggage UPTO22LB 10KG (EGP 3,495); seat 22E (EGP 538, centre, not exit). Total EGP 13,076 from wallet. PNR **Y7Q77S**, ticket 772453753904, ref NDCEG-BR-F261119WgrDkS, order BRN222NDCORD2611199W5KFY, invoice INVNDC261119IjsG38.
+- EMDs shown and confirmed correct by the user: seat 22E `774556363862`; baggage `774556363861` (both "CONNECTED 772453753904"); meal shows `1H2MSZ_PGENRP5X3IO0JW8PJLJKEAW5MFLB-37` in brackets (no "EMD" label).
+- Booking Confirmation **Pass** (`bookingconfirmation_B1_Y7Q77S.png`). PNR Query **Pass** — new "Ancillaries" section now lists meal, baggage and seat with EMDs (`pnrquery_B1_Y7Q77S.png`). Itinerary **Pass** (`itinerary_B1_Y7Q77S.png`). Finance Report not run (excluded).
+- Observations: PNR Query Flight Legs shows 06:15-09:25 vs 07:15-10:25 on Booking Confirmation/Itinerary (1 h difference). PNR Query baggage block shows an extra ID `...MFLB-3` above the EMD. Seat map seat buttons expose an aria-label "Seat 22E, row 22, ..., available for EGP 538" usable as a locator. Gender is derived from Title and locked.
+
+## 14. B2 — one-way, 1 ADT + 1 CHD (Book) — 2026-11-19
+- Search header "1 Adult • 1 Child", 29 options; second result MS661 07:15 (EGP 17,652). Child Title list offers only Mr/Ms/Mrs (no Mstr/Miss); child set as Ms, DOB 10/03/2018. Second passenger accordion ("1- Child") is collapsed by default on both Passenger Details and Ancillaries.
+- Seat map with 2 travellers: book seat for traveller 1 → button "Confirm 1 of 2 seats" → traveller 2 becomes active → book → "Confirm 2 seats".
+- Booking: QaBtwoA (ADT) Vegetarian Hindu + UPTO22LB 10KG + 23E; QaBtwoC (CHD) Bland + UPTO22LB 10KG + 23F. Total EGP 25,718. PNR **Y7R6AM**, tickets 772453753921 / 772453753922, ref NDCEG-BR-F261119Dln7xv, order BRN222NDCORD261119AKTWYS.
+- EMDs (user-confirmed): ADT seat `774556363865`, baggage `774556363864`, meal `...QZM-72`; CHD seat `774556363866`, baggage `774556363863`, meal `...QZM-75`.
+- Booking Confirmation **Pass**, PNR Query **Pass**, Itinerary **Pass** (evidence `*_B2_Y7R6AM.png`). TC-008 Blocked (distinct EMDs returned). PNR Query again shows flight times 1 h earlier than the other pages.
+
+## 15. B3 — round trip, 1 ADT (Book) — 2026-11-19
+- From here on the user asked for no screenshots and for bookings to proceed without per-booking approval; evidence below is captured page text.
+- Round-trip search: return row auto-filled JED→CAI with the same date (30/11/2026). 50 options; second result MS667 CAI 08:10-11:20 + MS670 JED 23:00-00:15 (+1), EGP 17,282.
+- Ancillaries step: one meal, baggage and Select Seat per direction (Onward/Return), in that order.
+- Booking: QaBthree Tester; onward Vegetarian Hindu + UPTO22LB 10KG + seat 21B (538); return Bland + UPTO22LB 10KG + seat 21B (538). Total EGP 25,348. PNR **Y7RQC2**, ticket 772453753958 (single ticket, both legs), ref NDCEG-BR-F261119BSAd06, order BRN222NDCORD261119TGXNER.
+- Shown on Booking Confirmation, PNR Query and Itinerary (identical): onward seat EMD `774556363869`, onward baggage `774556363867`, return baggage `774556363868`, meals `...NR-37` / `...NR-91`. **Return seat 21B has no EMD in any of the three locations** → TC-006/TC-025 Fail per user rule (all ancillaries have EMDs); TC-027 and TC-015 Pass (no placeholder, no copied EMD).
+- PNR Query Flight Legs times are 1 h earlier (07:10-10:20, 22:00-23:15) than Booking Confirmation/Itinerary.
